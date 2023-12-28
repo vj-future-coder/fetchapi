@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <script src="https://kit.fontawesome.com/68939498b9.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="sign.css">
+    <style>
+        /* Add styles for the blurred background */
+        body {
+            background-color: green; 
+            background-size: cover;
+            margin: 0;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+       /* Add styles for the alert box */
+       #custom-alert {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Create Account</h2>
+        </div>
+        <form class="form" id="form" action="">
+            <div class="form-control">
+                <label for="email">Email</label>
+                <input type="email" placeholder="Enter email" id="email">
+                <i class="fas fa-check-circle"></i>
+                <i class="fas fa-exclamation-circle"></i>
+                <small>Error msg</small>
+            </div>
+            <div class="form-control">
+                <label for="password">Password</label>
+                <input type="password" placeholder="Password" id="password">
+                <i class="fas fa-check-circle"></i>
+                <i class="fas fa-exclamation-circle"></i>
+                <small>Error msg</small>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <!-- Success Alert Box -->
+    <div id="custom-alert">
+        <p>Login Successful!</p>
+    </div>
+
+    <script>
+        const form = document.getElementById("form");
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            checkInput();
+        });
+
+        function checkInput() {
+            const emailValue = document.getElementById("email").value.trim();
+            const passwordValue = document.getElementById("password").value.trim();
+
+            if (emailValue === '') {
+                setError(document.getElementById("email"), 'Email cannot be blank');
+            } else if (!isEmail(emailValue)) {
+                setError(document.getElementById("email"), 'Not a valid Email');
+            } else {
+                setSuccess(document.getElementById("email"));
+            }
+
+            if (passwordValue === '') {
+                setError(document.getElementById("password"), 'Password cannot be blank');
+            } else {
+                setSuccess(document.getElementById("password"));
+            }
+
+            // Check if all fields are successfully validated
+            const isValid = document.querySelectorAll('.form-control.success').length === 2;
+
+            if (isValid) {
+                // Display success message in alert box
+                showSuccessAlert();
+
+                // Example: Fetch API for login (replace 'your_login_api_url' with your actual API endpoint)
+                fetch('your_login_api_url', {
+                    method: 'POST',
+                    body: JSON.stringify({ email: emailValue, password: passwordValue }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // You can handle the API response here
+                        console.log(data);
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function setError(input, msg) {
+            const formControl = input.parentElement;
+            const small = formControl.querySelector('small');
+            formControl.className = 'form-control error';
+            small.innerText = msg;
+        }
+
+        function setSuccess(input) {
+            const formControl = input.parentElement;
+            formControl.className = 'form-control success';
+        }
+
+        function isEmail(email) {
+            return /^(([^<>()\[\]\\.,;:\@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})$/.test(email);
+        }
+
+        function showSuccessAlert() {
+            const alertBox = document.getElementById('custom-alert');
+            alertBox.style.display = 'block';
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+                // Redirect to index.html
+                window.location.href = 'index.html';
+            }, 3000); // Adjust the time as needed (e.g., 3000 milliseconds = 3 seconds)
+        }
+    </script>
+</body>
+</html>
